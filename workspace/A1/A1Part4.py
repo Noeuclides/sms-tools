@@ -23,6 +23,10 @@ def downsampleAudio(inputFile, M):
     """
     Inputs:
         inputFile: file name of the wav file (including path)
-        	M: downsampling factor (positive integer)
+        M: downsampling factor (positive integer)
     """
-    ## Your code here
+    (fs, x) = wavread(inputFile)
+    dsfs = fs / M
+    new_array = x[::M]
+    downsampled = inputFile.replace('.wav', '_downsampled.wav')
+    wavwrite(new_array, dsfs, downsampled)
