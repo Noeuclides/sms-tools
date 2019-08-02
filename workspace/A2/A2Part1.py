@@ -27,6 +27,5 @@ def genSine(A, f, phi, fs, t):
     """
     step = 1.0 / fs
     array = np.arange(0, t, step)	
-    print (array)
     x = A * np.cos(2.0 * np.pi * f * array + phi)
     return (x)
