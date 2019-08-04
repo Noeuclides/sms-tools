@@ -25,12 +25,12 @@ def DFT(x):
         The function should return a numpy array of length N
         X (numpy array) = The N point DFT of the input sequence x
     """
-    s = []
+    s = np.array([])
     spectrum = 0
     N = len(x)
-    for k in range(len(x)-1, -1, -1):
+    for k in range(N):
         for n in range(N):
             spectrum += x[n]*np.exp(-1j * 2 * np.pi * n * k / N)
-        s.append(spectrum)
+        s = np.append(s, spectrum)
         spectrum = 0
     return (s)
