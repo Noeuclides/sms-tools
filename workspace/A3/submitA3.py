@@ -11,6 +11,8 @@ import base64
 import numpy as np
 import subprocess
 import os
+import warnings
+warnings.filterwarnings("ignore")
 import matplotlib.pyplot as plt
 # Python 2 and 3 compatibility:
 try: input = raw_input
@@ -24,7 +26,7 @@ class NullDevice:
         pass
 
 def submit():   
-    print ('==\n== Submitting Solutions: Programming Assignment-1\n==')
+    print ('==\n== Submitting Solutions: Programming Assignment-3\n==')
  
     (email, password) = loginPrompt()
     if not email:
@@ -165,8 +167,8 @@ def send_request(values):
 
 def send_request_new(values):
     headers = {
-        "Cache-Control": "no-cache",
-        "Content-Type": "application/json",
+        'Cache-Control': 'no-cache',
+        'Content-Type': 'application/json',
     }
     url = submit_url()  
     #data = urllib.urlencode(values)
@@ -218,69 +220,97 @@ def wrongSubmission():
     
 ############ BEGIN ASSIGNMENT SPECIFIC CODE - YOU'LL HAVE TO EDIT THIS ##############
 
-from A1Part1 import readAudio
-from A1Part2 import minMaxAudio
-from A1Part3 import hopSamples
+from A3Part1 import minimizeEnergySpreadDFT
+from A3Part2 import optimalZeropad
+from A3Part3 import testRealEven
+from A3Part4 import suppressFreqDFTmodel
+from A3Part5 import zpFFTsizeExpt
 
 # DEFINE THE ASSIGNMENT KEY HERE
-ASSIGNMENT_KEY = 'gEs_ukOSEeaM7g7JWtAUPw'
+ASSIGNMENT_KEY = '8xEvnFjFEearbwoQTjNoFw'
 
 # DEFINE THE PartIds in this list for each PA
-LIST_PARTIDS = ['6q8mO', 'LI7lT', '6S5Os'] ################## CHANGE THE PART IDS HERE !!
+LIST_PARTIDS = ['H49Pi', 'SwB1b', 'Y3gtV', 'nyZLq'] ################## CHANGE THE PART IDS HERE !!
 
 # the "Identifier" you used when creating the part
-partIds = ['A1-part-1', 'A1-part-2', 'A1-part-3']
+partIds = ['A3-part-1', 'A3-part-2', 'A3-part-3', 'A3-part-4']#, 'A3-part-5']
 
 # used to generate readable run-time information for students
-partFriendlyNames = ['Reading an audio file', 'Basic operations with audio', 'Python array indexing'] 
-
+partFriendlyNames = ['Minimize energy spread in DFT of sinusoids', 'Optimal zero-padding', 'Symmetry properties of the DFT', 'Suppressing frequency components using DFT model']#, 'FFT size and zero padding (Optional)'] 
 # source files to collect (just for our records)
-sourceFiles = ['A1Part1.py', 'A1Part2.py', 'A1Part3.py']
+sourceFiles = ['A3Part1.py', 'A3Part2.py', 'A3Part3.py', 'A3Part4.py']#, 'A3Part5.py']
 
 def output(partIdx):
     """Uses the student code to compute the output for test cases."""
     outputString = ''
-    filename = open('testInputA1.pkl','rb')
-    try: ## load the dict
-        dictInp = pickle.load(filename,encoding='latin1')  ## python3
+    filename = open('testInputA3.pkl','rb')
+    try: ## load the dict containing output types and test cases
+        dictInput = pickle.load(filename,encoding='latin1')  ## python3
     except TypeError:
-        dictInp = pickle.load(filename)  ## python2
+        dictInput = pickle.load(filename)  ## python2 
+        
+    testCases = dictInput['testCases']
+    outputType = dictInput['outputType']
 
-    testCases = dictInp['testCases']
-    outputType = dictInp['outputType']
-
-    if partIdx == 0: # This is wk1-part-1: readAudio
-        for line in testCases['A1-part-1']:
-            answer = readAudio(**line)
-            if outputType['A1-part-1'][0] == type(answer):
+    if partIdx == 0: # This is A3-part-1: minimizeEnergySpreadDFT
+        for line in testCases['A3-part-1']:
+            answer = minimizeEnergySpreadDFT(**line)
+            if outputType['A3-part-1'][0] == type(answer):
                 outputString += convertNpObjToStr(answer) + '\n'
             else:
-                wrongOutputTypeError(outputType['A1-part-1'][0],partIdx)
+                wrongOutputTypeError(outputType['A3-part-1'][0],partIdx)
                 return ''
                 #sys.exit(1)  
       
-    elif partIdx == 1: # This is wk1-part-2: minMaxAudio
-        for line in testCases['A1-part-2']:
-            answer = minMaxAudio(**line)
-            if outputType['A1-part-2'][0] == type(answer):
-                outputString += str(answer).strip('()') + '\n'
+    elif partIdx == 1: # This is A3-part-2: optimalZeropad
+        for line in testCases['A3-part-2']:
+            answer = optimalZeropad(**line)
+            if outputType['A3-part-2'][0] == type(answer):
+                outputString += convertNpObjToStr(answer) + '\n' #str(answer).strip('()') + '\n'
             else:
-                wrongOutputTypeError(outputType['A1-part-2'][0],partIdx)
+                wrongOutputTypeError(outputType['A3-part-2'][0],partIdx)
                 return ''
                 #sys.exit(1)  
       
-    elif partIdx == 2: # This is wk1-part-3: hopSamples
-        for line in testCases['A1-part-3']:
-            answer = hopSamples(**line) 
-            if outputType['A1-part-3'][0] == type(answer):
-                answer = answer.copy()  # Important, else does not allocate continuous memory locations
-                outputString += convertNpObjToStr(answer) + '\n'
+    elif partIdx == 2: # This is A3-part-3: testRealEven
+        for line in testCases['A3-part-3']:
+            answer = testRealEven(**line) 
+            if (outputType['A3-part-3'][0] == type(answer)) and (len(answer) == 3):
+            #answer = answer.copy()  # Important, else does not allocate continuous memory locations
+                for ans in answer:
+                    outputString += convertNpObjToStr(ans) + '\n'
+                outputString += '\n'
             else:
-                wrongOutputTypeError(outputType['A1-part-3'][0],partIdx)
+                wrongOutputTypeError(outputType['A3-part-3'][0],partIdx)
                 return ''
-                #sys.exit(1)       
+                #sys.exit(1)         
+        
+    elif partIdx == 3: # This is A3-part-4: suppressFreqDFTmodel
+        for line in testCases['A3-part-4']:
+            answer = suppressFreqDFTmodel(**line) 
+            if (outputType['A3-part-4'][0] == type(answer)) and (len(answer) == 2):
+                #answer = answer.copy()  # Important, else does not allocate continuous memory locations
+                for ans in answer:
+                    outputString += convertNpObjToStr(ans) + '\n'
+                outputString += '\n'
+            else:
+                wrongOutputTypeError(outputType['A3-part-4'][0],partIdx)
+                return ''
+                #sys.exit(1)  
+        
+    elif partIdx == 4: # This is A3-part-5: zpFFTsizeExpt
+        for line in testCases['A3-part-5']:
+            answer = zpFFTsizeExpt(**line) 
+            if (outputType['A3-part-5'][0] == type(answer)) and (len(answer) == 3):
+            #answer = answer.copy()  # Important, else does not allocate continuous memory locations
+                for ans in answer:
+                    outputString += convertNpObjToStr(ans) + '\n'
+                outputString += '\n'
+            else:
+                wrongOutputTypeError(outputType['A3-part-5'][0],partIdx)
+                return ''
+                #sys.exit(1)   
 
     return outputString.strip()
 
 submit()
-
